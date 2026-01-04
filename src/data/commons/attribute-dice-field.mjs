@@ -28,7 +28,12 @@ class AttributeDiceData extends DataModel {
   }
 
   get formula() {
-    const formula = `${this._diceFormulaPart}${this._modFormulaPart}`;
+    let formula = `${this._diceFormulaPart}`;
+    if (this.modifier.toNearest() >= 0) {
+      formula += ` + ${this.modifier.toString()}`;
+    } else {
+      formula += ` - ${Math.abs(this.modifier).toString()}`;
+    }
     return Roll.validate(formula) ? formula : `${this._diceFormulaPart}`;
   }
 
@@ -37,8 +42,6 @@ class AttributeDiceData extends DataModel {
   }
 
   _diceFormulaPart = `1d${this.faces}x`;
-
-  _modFormulaPart = this.modifier.signedString();
 
   get diceIcon() {
     return `${SYSTEM_CONST.ASSETS_PATH}/dice/d${this.faces}.svg`;
